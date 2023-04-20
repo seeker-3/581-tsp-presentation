@@ -1,10 +1,9 @@
 <script lang="ts">
   import { page } from '$app/stores'
 
-  console.log($page.route.id)
-
   import { goto } from '$app/navigation'
   import '@unocss/reset/tailwind.css'
+  import { fade } from 'svelte/transition'
   import 'virtual:uno.css'
   import { capitalize } from '../utils/string'
 
@@ -29,19 +28,12 @@
     return capitalize(name).replaceAll('-', ' ')
   }
 
-  // $: currentURL = $page.route.id
+  $: currentURL = $page.route.id
   $: pageIndex = getPageIndex($page.route.id)
   $: isFirstPage = pageIndex === 0
   $: isLastPage = pageIndex === pageURLs.length - 1
-  $: previousButtonIsDisabled = isFirstPage || pageIndex === null
-  $: nextButtonIsDisabled = isLastPage || pageIndex === null
-  $: console.dir({
-    pageIndex,
-    isFirstPage,
-    isLastPage,
-    previousButtonIsDisabled,
-    nextButtonIsDisabled,
-  })
+  $: isPreviousPage = !isFirstPage && pageIndex !== null
+  $: isNextPage = !isLastPage && pageIndex !== null
 
   const gotoNextPage = async () => {
     const nextPageURL = getPageURL(pageIndex, 1)
@@ -56,42 +48,47 @@
 <div class="cols grid h-full grid-cols-[20ch_1fr]">
   <nav class="flex flex-col gap-2 bg-black p-2">
     {#each pageURLs as slide}
-      <a href={slide} class="">
+      <a href={slide} class="hover:text-slate-300">
         {getPageName(slide)}
       </a>
     {/each}
   </nav>
-  <main class="grid grid-rows-[1fr_auto] bg-blue-950 p-4">
-    <div>
-      <slot />
+  <main class="grid grid-rows-[1fr_auto] gap-4 bg-blue-950 p-4">
+    <div class="grid">
+      {#key currentURL}
+        <div in:fade>
+          <slot />
+        </div>
+      {/key}
     </div>
-    <div class="flex justify-between">
-      <button
-        class="
+    <div class="flex">
+      {#if isPreviousPage}
+        <button
+          class="
           rounded bg-blue-500 px-4 py-2 shadow-lg
-          hover:shadow-none
+        hover:bg-blue-400 hover:text-slate-50 hover:shadow-none
           disabled:opacity-75 disabled:shadow-none
         "
-        disabled={previousButtonIsDisabled}
-        on:click={gotoPreviousPage}
-      >
-        Previous
-      </button>
-      <button
-        class="
-          rounded bg-blue-500 px-4 py-2 shadow-lg
-          hover:shadow-none
+          on:click={gotoPreviousPage}
+        >
+          Previous
+        </button>
+      {/if}
+      {#if isNextPage}
+        <button
+          class="
+          ml-auto rounded bg-blue-500 px-4 py-2 shadow-lg
+          hover:bg-blue-400 hover:text-slate-50 hover:shadow-none
           disabled:opacity-75 disabled:shadow-none
         "
-        disabled={nextButtonIsDisabled}
-        on:click={gotoNextPage}
-      >
-        Next
-      </button>
+          on:click={gotoNextPage}
+        >
+          Next
+        </button>
+      {/if}
     </div>
   </main>
 </div>
 
 <style uno:preflights uno:safelist global>
 </style>
-
