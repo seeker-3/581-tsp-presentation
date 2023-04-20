@@ -5,6 +5,7 @@
   import '@unocss/reset/tailwind.css'
   import { fade } from 'svelte/transition'
   import 'virtual:uno.css'
+  import { ExternalLink, GitHub } from '../icons'
   import { capitalize } from '../utils/string'
 
   export const pageURLs = ['/', '/001--questions', '/002--brute-force-animation']
@@ -45,18 +46,33 @@
   }
 </script>
 
-<div class="cols grid h-full grid-cols-[20ch_1fr]">
-  <nav class="flex flex-col gap-2 bg-black p-2">
-    {#each pageURLs as slide}
-      <a href={slide} class="hover:text-slate-300">
-        {getPageName(slide)}
-      </a>
-    {/each}
+<div class="cols grid h-full grid-cols-[22ch_1fr]">
+  <nav class="grid grid-rows-[1fr_auto] bg-black p-4 pb-10">
+    <div class="flex flex-col gap-3">
+      {#each pageURLs as slide}
+        <a href={slide} class="hover:text-slate-400">
+          {getPageName(slide)}
+        </a>
+      {/each}
+    </div>
+    <a
+      rel="external"
+      href="https://github.com/seeker-3/581-tsp-presentation"
+      target="_blank"
+      class="
+      flex items-center justify-center gap-2
+      hover:fill-slate-400 hover:text-slate-400
+      "
+    >
+      <GitHub />
+      <span>View source</span>
+      <ExternalLink />
+    </a>
   </nav>
   <main class="grid grid-rows-[1fr_auto] gap-4 bg-blue-950 p-4">
     <div class="grid">
       {#key currentURL}
-        <div in:fade>
+        <div in:fade={{ duration: 750 }}>
           <slot />
         </div>
       {/key}
@@ -65,10 +81,10 @@
       {#if isPreviousPage}
         <button
           class="
-          rounded bg-blue-500 px-4 py-2 shadow-lg
-        hover:bg-blue-400 hover:text-slate-50 hover:shadow-none
-          disabled:opacity-75 disabled:shadow-none
-        "
+            rounded bg-purple-900 px-4 py-2 shadow-lg
+          hover:bg-fuchsia-950 hover:text-slate-50 hover:shadow-none
+            disabled:opacity-75 disabled:shadow-none
+          "
           on:click={gotoPreviousPage}
         >
           Previous
@@ -77,10 +93,10 @@
       {#if isNextPage}
         <button
           class="
-          ml-auto rounded bg-blue-500 px-4 py-2 shadow-lg
-          hover:bg-blue-400 hover:text-slate-50 hover:shadow-none
-          disabled:opacity-75 disabled:shadow-none
-        "
+            ml-auto rounded bg-purple-900 px-4 py-2 shadow-lg
+          hover:bg-fuchsia-950 hover:text-slate-50 hover:shadow-none
+            disabled:opacity-75 disabled:shadow-none
+          "
           on:click={gotoNextPage}
         >
           Next
